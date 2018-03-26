@@ -16,12 +16,13 @@
     <form action="/login" method="post">
         <p>
           <label for="username">用户名：</label>
-          <input id="username" type="text">
+          <input id="username" name="user" type="text">
         </p>
         <p>
             <label for="password">密码：</label>
-            <input id="password" type="text" />
+            <input id="password" name="pwd" type="text" />
             <input type="submit" value="提交" />
+            <span style="color: blue"> {{ error_msg }}</span>
         </p>
     </form>
     <script src="/static/jquery.min.js"></script>
