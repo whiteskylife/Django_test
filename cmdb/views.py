@@ -21,7 +21,7 @@ def login(request):
         user = request.POST.get('user', None)
         pwd = request.POST.get('pwd', None)
         if user == 'whisky' and pwd == '123':
-            return redirect('/home')
+            return redirect('/home')  # 必须要加/,代表本地URL
         else:
             error_msg = "用户名或密码错误"
     return render(request, 'login.html', {'error_msg': error_msg})
