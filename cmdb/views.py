@@ -4,6 +4,8 @@ from django.shortcuts import render
 from django.shortcuts import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.views import View  # CBV模式class需要继承这个View类
+
 from django.core.files.uploadedfile import InMemoryUploadedFile # 上传文件用到的类
 
 
@@ -42,14 +44,38 @@ def home(request):
 def upload(request):
     import os
     if request.method == "POST":
-        file_obj = request.FILES.get('upload_file')
-        path = os.path.join('upload', file_obj.name)
-        f = open(path, mode='wb')
-        for content in file_obj.chunks():  # from django.core.files.uploadedfile import InMemoryUploadedFile # 上传文件用到的类中的chunks方法
-            f.write(content)
-        f.close()
+        try:
+            file_obj = request.FILES.get('upload_file')
+            path = os.path.join('upload', file_obj.name)
+            f = open(path, mode='wb')
+            for content in file_obj.chunks():  # from django.core.files.uploadedfile import InMemoryUploadedFile # 上传文件用到的类中的chunks方法
+                f.write(content)
+            f.close()
+        except Exception as e:
+            print('提交为空')
     return render(request, 'home.html')
 
+
+class Home(View):
+    """
+        Django的CBV模式
+    """
+    def dispatch(self, request, *args, **kwargs):
+        '''
+            调用父类的dispatch方法，再父类中dispatch方法利用反射区分处理用户提交时使用方法（POST，GET...）
+        '''
+        print('before')
+        result = super(Home, self).dispatch(request, *args, **kwargs)
+        print('after')
+        return result
+
+    def get(self, request):
+        print(request.method, '-----------------------------------------')
+        return render(request, 'home.html')  # 返回时，先返回给dispatch方法，由dispatch把html返回给用户
+
+    def post(self, request):
+        print(request.method, '-----------------------------------------')
+        return render(request, 'home.html')
 
 
 # def home(request):

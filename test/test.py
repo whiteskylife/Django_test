@@ -13,7 +13,8 @@ class Foo:
 class Foo2(Foo):
 
     def m1(self):
-        print('this is Foo2-----------')
+        # print('this is Foo2-----------')
+        pass
 
 
 obj = Foo2()
