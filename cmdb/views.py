@@ -78,5 +78,17 @@ class Home(View):
         return render(request, 'home.html')
 
 
+USER_DICT = {
+    'k1': 'root1',
+    'k2': 'root2',
+    'k3': 'root3',
+    'k4': 'root4',
+}
+
+
+def index(request):
+    return render(request, 'index.html', {'user_dict': USER_DICT})
+
+
 # def home(request):
 #     return HttpResponse('<h1>CMDB</h1>')

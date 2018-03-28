@@ -24,4 +24,5 @@ urlpatterns = [
     # path(r'home', views.home),
     path(r'upload', views.upload),
     path(r'home', views.Home.as_view()),
+    path('index', views.index),
 ]

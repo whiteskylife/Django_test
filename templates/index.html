@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul>
+        {% for k in user_dict.keys %}
+            <li>{{ k }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for val in user_dict.values %}
+            <li>{{ val }}</li>
+        {% endfor %}
+    </ul>
+    <ul>
+        {% for k, row in user_dict.items %}
+            <li>{{ k }} - {{ row }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
