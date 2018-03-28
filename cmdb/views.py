@@ -78,11 +78,19 @@ class Home(View):
         return render(request, 'home.html')
 
 
+# USER_DICT = {
+#     'k1': 'root1',
+#     'k2': 'root2',
+#     'k3': 'root3',
+#     'k4': 'root4',
+# }
+
 USER_DICT = {
-    'k1': 'root1',
-    'k2': 'root2',
-    'k3': 'root3',
-    'k4': 'root4',
+    '1': {'name': 'root1', 'email': 'root@live.com'},
+    '2': {'name': 'root2', 'email': 'root@live.com'},
+    '3': {'name': 'root3', 'email': 'root@live.com'},
+    '4': {'name': 'root4', 'email': 'root@live.com'},
+    '5': {'name': 'root5', 'email': 'root@live.com'},
 }
 
 
@@ -90,5 +98,32 @@ def index(request):
     return render(request, 'index.html', {'user_dict': USER_DICT})
 
 
-# def home(request):
-#     return HttpResponse('<h1>CMDB</h1>')
+def index2(request, nid):
+    # print(request.path_info)  # path_info方法：当前URL，可以直接传给前端
+    from django.urls import reverse
+    v = reverse('indexx', args=(666, ))
+    # v = reverse('indexx', kwargs={'nid': 1, 'uid': '99'})
+    print(v)
+    # return render(request, 'index.html', {'user_dict': USER_DICT})
+    return render(request, 'index.html', {'url': v})
+
+
+def detail(request, nid, uid):
+    # print(nid, uid)
+    # return HttpResponse(nid)
+
+    # nid = request.GET.get('nid')  # jango从urls.py 中取值无需再get('nid')
+    detail_info = USER_DICT[nid]
+    return render(request, 'detail.html', {'detail_info': detail_info})
+
+'''
+访问：http://127.0.0.1:8000/index
+跳转：http://127.0.0.1:8000/detail-5-5.html
+
+也可以用下面的**kwargs方式收参数
+def detail(request, *args, **kwargs):
+
+    detail_info = USER_DICT[kwargs['nid']]
+    return render(request, 'detail.html', {'detail_info': detail_info})
+
+'''
