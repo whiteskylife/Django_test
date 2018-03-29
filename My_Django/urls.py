@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from cmdb import views
+from django.conf.urls import url, include
+
+
+# urlpatterns = [
+#     url(r'cmdb/', include("app01.urls")),
+#     url(r'monitor/', include("app02.urls")),
+# ]
+
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
