@@ -15,30 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from cmdb import views
+from app01 import views
 from django.conf.urls import url, include
 
 
 urlpatterns = [
-    url(r'cmdb/', include("app01.urls")),
-    # url(r'monitor/', include("app02.urls")),
+    url(r'login/', views.login),
+    url(r'index/', views.index),
+    url(r'^user_info/', views.user_info),
+    re_path(r'^userdetail-(?P<nid>\d+)/', views.user_detail),
+    re_path('orm/', views.orm),
 ]
 
 
 
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path(r'h.html/', views.home),
-#     path(r'login', views.login),
-#     # path(r'home', views.home),
-#     path(r'upload', views.upload),
-#     path(r'home', views.Home.as_view()),
-#     path('index/', views.index),
-#     # path(r'detail/', views.detail),
-#     # re_path(r'detail-(\d+).html/', views.detail),
-#     re_path(r'detail-(?P<nid>\d+)-(?P<uid>\d+).html/', views.detail),
-#     re_path(r'asdasdasdasd/(?P<nid>\d+)/', views.index2, name='indexx'),
-#     # url(r'cmdb/', include("app01.urls")),
-#     re_path('orm/', views.orm),
-# ]

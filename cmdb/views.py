@@ -14,21 +14,21 @@ USER_LIST = [
 ]
 
 
-def login(request):
-    """
-    :param request:包含了用户端请求提交的所有的信息
-    :return:
-    """
-    # print(request.method)
-    error_msg = ''
-    if request.method == "POST":
-        user = request.POST.get('user', None)
-        pwd = request.POST.get('pwd', None)
-        if user == 'whisky' and pwd == '123':
-            return redirect('/home')  # 必须要加/,代表本地URL
-        else:
-            error_msg = "用户名或密码错误"
-    return render(request, 'login.html', {'error_msg': error_msg})
+# def login(request):
+#     """
+#     :param request:包含了用户端请求提交的所有的信息
+#     :return:
+#     """
+#     # print(request.method)
+#     error_msg = ''
+#     if request.method == "POST":
+#         user = request.POST.get('user', None)
+#         pwd = request.POST.get('pwd', None)
+#         if user == 'whisky' and pwd == '123':
+#             return redirect('/home')  # 必须要加/,代表本地URL
+#         else:
+#             error_msg = "用户名或密码错误"
+#     return render(request, 'login.html', {'error_msg': error_msg})
 
 
 def home(request):
@@ -127,3 +127,37 @@ def detail(request, *args, **kwargs):
     return render(request, 'detail.html', {'detail_info': detail_info})
 
 '''
+
+
+from cmdb import models         # 导入models
+
+def orm(request):
+    # 创建一条数据
+    # 推荐方式一：
+    # models.UserInfo.objects.create(username='root', password='123')  # UserInfo为表名
+
+    # 第二种方式
+    # dic = {'username': 'eric', 'password': '123'}
+    # models.UserInfo.objects.create(**dic)
+
+    # 第三种方式：
+    # obj = models.UserInfo(username='alex', password='6666')
+    # obj.save()
+
+
+    # 查
+    # result = models.UserInfo.objects.all()
+    # result = models.UserInfo.objects.filter(username='root', password='123')
+    # for row in result:
+    #     print(row.id, row.username, row.password)
+    # print(result)
+
+    # 删除：
+    # models.UserInfo.objects.filter(username='alex').delete()
+
+    #  更新：
+    # models.UserInfo.objects.filter(id=5).update(password='66666666666666666')
+
+    return HttpResponse('orm')
+
+

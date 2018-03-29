@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul>
+        {% for k, row in user_dict.items %}
+            <li>{{ row.name }}<a target="_blank" href="/detail-{{ k }}-{{ k }}.html">详细信息</a></li>
+        {% endfor %}
+    </ul>
+{#    <form action="{% url 'indexx' 2 %}" method="post">#}
+{#    <form action="{{ request.path_info }}" method="post">#}
+{#    <form action="{% url 'indexx' nid=1 uid=3 %}" method="post">#}
+    <form action="{{ url }}" method="post">
+        <p><input type="text" name="user" placeholder="用户名" /></p>
+        <input type="submit" value="提交" />
+    </form>
+</body>
+</html>
+

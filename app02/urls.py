@@ -19,26 +19,10 @@ from cmdb import views
 from django.conf.urls import url, include
 
 
-urlpatterns = [
-    url(r'cmdb/', include("app01.urls")),
-    # url(r'monitor/', include("app02.urls")),
-]
-
-
-
-
 # urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path(r'h.html/', views.home),
-#     path(r'login', views.login),
-#     # path(r'home', views.home),
-#     path(r'upload', views.upload),
-#     path(r'home', views.Home.as_view()),
-#     path('index/', views.index),
-#     # path(r'detail/', views.detail),
-#     # re_path(r'detail-(\d+).html/', views.detail),
-#     re_path(r'detail-(?P<nid>\d+)-(?P<uid>\d+).html/', views.detail),
-#     re_path(r'asdasdasdasd/(?P<nid>\d+)/', views.index2, name='indexx'),
-#     # url(r'cmdb/', include("app01.urls")),
+#     url(r'login/', views.login),
 #     re_path('orm/', views.orm),
 # ]
+
+
+
