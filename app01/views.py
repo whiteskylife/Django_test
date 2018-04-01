@@ -30,10 +30,22 @@ def index(request):
     return render(request, 'index.html')
 
 
+
 def user_info(request):
-    user_list = models.UserInfo.objects.all()                   # user_list是QuerySet类型，里面是包含结果的对象列表
-    print(user_list.query)                                      # 把orm语句翻译成SQL语句
-    return render(request, 'user_info.html', {'user_list': user_list})
+    """
+    用户列表打印、添加用户
+    """
+    if request.method == "GET":
+        user_list = models.UserInfo.objects.all()                   # user_list是QuerySet类型，里面是包含结果的对象列表
+        # print(user_list.query)                                      # 把orm语句翻译成SQL语句
+        return render(request, 'user_info.html', {'user_list': user_list})
+    elif request.method == 'POST':
+        u = request.POST.get('username')
+        p = request.POST.get('pwd')
+        models.UserInfo.objects.create(username=u, password=p)
+        # user_list = models.UserInfo.objects.all()
+        # return render(request, 'user_info.html', {'user_list': user_list})
+        return redirect('/cmdb/user_info/')           # 避免代码重复，这里用redirect方法，它是以get方法访问的
 
 
 def user_detail(request, nid):
@@ -41,6 +53,22 @@ def user_detail(request, nid):
     # models.UserInfo.objects.get(id=nid)   # 另外一种方法获取一条数据，如果数据库中没有对应id，程序直接报错，应该结合try使用
     print(obj)
     return render(request, 'user_detail.html', {'obj': obj})
+
+
+def user_del(request, nid):
+    models.UserInfo.objects.filter(id=nid).delete()
+    return redirect('/cmdb/user_info/')
+
+
+def user_edit(request, nid):
+    if request.method == 'GET':
+        obj = models.UserInfo.objects.filter(id=nid).first()
+        return render(request, 'user_edit.html', {'obj': obj})
+    if request.method == 'POST':
+        u = request.POST.get('username')
+        p = request.POST.get('password')
+        models.UserInfo.objects.filter(id=nid).update(username=u, password=p)
+        return redirect('/cmdb/user_info/')
 
 
 from app01 import models         # 导入models
