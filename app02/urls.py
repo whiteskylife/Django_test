@@ -25,7 +25,9 @@ urlpatterns = [
     re_path(r'^business$', views.business),    # 不加$符号，后面business_add这样的URL都不生效
     re_path(r'^host$', views.host),
     re_path(r'^test_ajax$', views.test_ajax),
-    re_path(r'^edit', views.edit),
+    re_path(r'^edit$', views.edit),
+    re_path(r'^app$', views.app),
+    re_path(r'^ajax_add_app$', views.ajax_add_app),
 ]
 
 

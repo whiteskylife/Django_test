@@ -17,5 +17,7 @@ class Host(models.Model):
     b = models.ForeignKey(to="Business", to_field="id", on_delete=models.PROTECT)   # 如果省略to_field参数则自动去Business中关联主键
 
 
-
+class Application(models.Model):
+    name = models.CharField(max_length=32)
+    r = models.ManyToManyField('Host')
 

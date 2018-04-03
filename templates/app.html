@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .hide{
+            display: none;
+        }
+        .shade{
+            position: fixed;
+            top:0;
+            right:0;
+            left:0;
+            bottom:0;
+            background: black;
+            opacity: 0.6;
+            z-index: 100;
+        }
+        .add-modal, .edit-modal{
+            position: fixed;
+            height: 300px;
+            width:400px;
+            top:100px;
+            left: 50%;
+            z-index: 101;
+            border: 1px solid red;
+            background: pink;
+            margin-left: -200px;
+        }
+        .host-tag{
+            display: inline-block;
+            padding: 3px;
+            border: 1px solid red;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <h1>应用列表</h1>
+    <div>
+        <input id="add_app" type="button" value="添加" />
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>应用名称</td>
+                <td>应用主机列表</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in app_list %}
+                <tr>
+                    <td>{{ app.name }}</td>
+                    <td>
+                        {% for host in app.r.all %}
+                            <span class="host-tag">{{ host.hostname }}</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="shade hide"></div>
+    <div class="add-modal hide">
+        <form id="add_form" method="post" action="/monitor/app">
+            <div class="group">
+                <input id="app_name" type="text" placeholder="应用名称" name="app_name" />
+            </div>
+
+            <div class="group">
+                <select id="host_list" name="host_list" multiple>
+                    {% for op in host_list %}
+                        <option value="{{ op.nid }}">{{ op.hostname }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <input type="submit" value="提交" />
+            <input id="add_submit_ajax" type="button" value="Ajax提交" />
+        </form>
+    </div>
+
+    <div class="edit-modal hide">
+        <form id="edit_form" method="post" action="/monitor/app">
+                <input id="num" name="nid" type="text" style="display: none;"/>
+                <input type="text" placeholder="主机名" name="hostname" />
+                <input type="text" placeholder="IP" name="ip" />
+                <input type="text" placeholder="端口" name="port" />
+
+                <select id="sel" name="b_id">
+                    {% for op in b_list %}
+                        <option value="{{ op.id }}">{{ op.caption }}</option>
+                    {% endfor %}
+                </select>
+            <a id="ajax_submit_edit">确认编辑</a>
+            <a id="cancel_edit">取消</a>
+
+        </form>
+    </div>
+    <script src="/static/jquery-1.9.1.js"></script>
+    <script>
+        $(function () {
+
+            $('#add_app').click(function () {
+                $('.shade, .add-modal').removeClass('hide');
+            });
+
+            $('#cancel').click(function () {
+               $('.shade, .add-modal').addClass('hide');
+            });
+
+            $('#add_submit_ajax').click(function () {
+                $.ajax({
+                    url: '/monitor/ajax_add_app',
+{#                    data: {'user':123, 'host_list':[1, 2, 3, 4]},#}
+                    data: $('#add_form').serialize(),
+                    method: "POST",
+                    dataType: 'JSON',               //jQuery内部自动转换为JSON格式,就不用JSON.parse转换了
+                    traditional: true,
+                    success: function (obj) {
+                        console.log(obj)
+                    },
+                    error:function () {             // 前端意外错误，而非后台报错
+
+                    }
+                })
+            });
+        })
+    </script>
+</body>
+</html>
