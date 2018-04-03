@@ -15,14 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from cmdb import views
+from app02 import views
 from django.conf.urls import url, include
 
 
-# urlpatterns = [
-#     url(r'login/', views.login),
-#     re_path('orm/', views.orm),
-# ]
+urlpatterns = [
+    # url(r'login/', views.login),
+    # re_path('orm/', views.orm),
+    re_path(r'^business$', views.business),    # 不加$符号，后面business_add这样的URL都不生效
+    re_path(r'^host$', views.host),
+    re_path(r'^test_ajax$', views.test_ajax),
+    re_path(r'^edit', views.edit),
+]
 
 
 

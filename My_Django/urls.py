@@ -21,7 +21,7 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     url(r'cmdb/', include("app01.urls")),
-    # url(r'monitor/', include("app02.urls")),
+    url(r'monitor/', include("app02.urls")),
 ]
 
 
