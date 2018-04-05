@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pagination .page {
+            display: inline-block;
+            padding: 5px;
+            background-color: gainsboro;
+        }
+         .page.active {
+            background-color: deepskyblue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        {% for item in li %}
+            {% include 'li.html' %}
+        {% endfor %}
+    </ul>
+    <div class="pagination">
+        {{ page_str|safe }}
+    </div>
+</body>
+</html>

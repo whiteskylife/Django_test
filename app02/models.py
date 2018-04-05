@@ -18,6 +18,9 @@ class Host(models.Model):
 
 
 class Application(models.Model):
+    """
+    Application表只有id和name两个字段
+    """
     name = models.CharField(max_length=32)
-    r = models.ManyToManyField('Host')
+    r = models.ManyToManyField('Host')          # 创建第三个关系表，表名：app02_application_r
 

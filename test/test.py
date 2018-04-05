@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*-coding:utf-8 -*-
 
 
@@ -20,5 +20,6 @@ class Foo2(Foo):
 obj = Foo2()
 obj.m1()
 print(obj)
+
 
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse
 from app02 import models
 from django.shortcuts import redirect
+from utils import pagination
 import json
 # Create your views here.
 
@@ -102,15 +103,15 @@ def edit(request):
 def app(request):
     if request.method == "GET":
         app_list = models.Application.objects.all()
-        for row in app_list:
-            print(row.name, row.r.all())
+        # for row in app_list:
+        #     print(row.name, row.r.all())
 
         host_list = models.Host.objects.all()
         return render(request, 'app.html', {'app_list': app_list, 'host_list': host_list})
     elif request.method == "POST":
         app_name = request.POST.get('app_name')
         host_list = request.POST.getlist('host_list')
-        print(app_name, host_list)
+        # print(app_name, host_list)
 
         obj = models.Application.objects.create(name=app_name)
         obj.r.add(*host_list)
@@ -125,4 +126,158 @@ def ajax_add_app(request):
     obj = models.Application.objects.create(name=app_name)
     obj.r.add(*host_list)           # 利用name=app_name的obj对象，添加对应主机，注意添加方式
     return HttpResponse(json.dumps(ret))  # HttpResponse只能传输字符串，这里需要把字典转换为字符串
+
+
+def edit_ajax_app(request):
+    app_name = request.POST.get('edit_app_name')
+    aid = request.POST.get('aid')
+    hid_list = request.POST.getlist('hid_list')
+    print(aid, app_name, hid_list)  # c1111 ['2', '3']
+    obj = models.Application.objects.get(id=aid)            # 更新Application应用表
+    obj.name = app_name                                     # 更新Application应用表
+    obj.save()                                              # 更新Application应用表
+    obj.r.set(hid_list)                                     # 更新关系表
+    return HttpResponse('OK')
+
+
+def clear(request):
+    obj = models.Application.objects.get(id=1)
+    obj.r.clear()
+    return HttpResponse('1111111111111')
+
+
+from django.utils.safestring import mark_safe
+
+# page_str = """
+#         <a href="/monitor/user_list/?p=1">1</a>
+#     <a href="/monitor/user_list/?p=2">2</a>
+#     <a href="/monitor/user_list/?p=3">3</a>
+#     """
+
+
+class Page:
+    def __init__(self, current_page, data_count, per_page_count=10, display_total_page=12):
+        """
+        :param current_page:        当前页
+        :param data_count:          数据总量，数据总个数
+        :param per_page_count:      每页显示数据条数
+        :param display_total_page:  需要展示多少个页码,注意这里只能放偶数，奇数会有bug
+        """
+        self.current_page = current_page
+        self.data_count = data_count
+        self.per_page_count = per_page_count
+        self.display_total_page = display_total_page
+    @property
+    def start(self):
+        """
+        :return: 根据当前页和每页显示的数据量生成每页起始数据索引，默认第一页为0
+        """
+        return (self.current_page - 1) * self.per_page_count
+    @property
+    def end(self):
+        """
+        :return: 根据当前页和每页显示的数据量生成每页末尾数据索引，默认第一页为10
+        """
+        return self.current_page * self.per_page_count
+    @property
+    def all_count(self):
+        """
+        根据数据总量、per_page_count计算总页数
+        :return:总页数
+        """
+        count, surplus = divmod(self.data_count, self.per_page_count)  # count:总页数
+        if surplus:
+            count += 1  # 如果有剩余数据，页数 + 1
+        return count
+
+    def page_str(self, base_url):
+        """
+        :param base_url: 当前URL前缀，要加'/'
+        :return: html字符串
+        """
+        # 生成html页码
+        page_list = []
+        if self.current_page > self.display_total_page / 2:  # 如果当前页大于5 而且当前页+5还在总页数之内
+            start_display_page = self.current_page - self.display_total_page / 2  # 如果当前页数为6，从第1页开始展示
+        else:
+            start_display_page = 1
+
+        stop_display_page = start_display_page + self.display_total_page - 1
+        if stop_display_page > self.all_count:
+            stop_display_page = self.all_count
+            start_display_page = stop_display_page - self.display_total_page + 1
+            if start_display_page < 1:
+                start_display_page = 1
+
+        if self.current_page == 1:
+            pre = '<a class="page" href="javascript:void(0);">上一页</a>'
+        else:
+            pre = '<a class="page" href="%s?p=%s">上一页</a>' % (base_url, self.current_page - 1)
+        page_list.append(pre)
+        for i in range(int(start_display_page), int(stop_display_page) + 1):  # for循环生成页码，不包含下边界所以+1
+            if i == self.current_page:
+                temp = '<a class="page active" href="%s?p=%s">%s</a>' % (base_url, i, i)
+            else:
+                temp = '<a class="page" href="%s?p=%s">%s</a>' % (base_url, i, i)
+            page_list.append(temp)
+
+        if self.current_page == self.all_count:
+            next_page = '<a class="page" href="javascript:void(0);">下一页</a>'
+        else:
+            next_page = '<a class="page" href="%s?p=%s">下一页</a>' % (base_url, self.current_page + 1)
+        page_list.append(next_page)
+
+        jump = """
+           <input type='text'/><a onclick='jumpTo(this, "%s?p=");'>GO</a>
+           <script>
+               function jumpTo(ths,base){
+                   var val = ths.previousSibling.value;
+                   location.href = base + val;
+               }
+           </script>
+
+           """ % base_url
+        page_list.append(jump)
+        # 生成html转换为字符串
+        page_str = " ".join(page_list)
+        return page_str
+
+
+LIST = []
+for num in range(1, 198):
+    LIST.append(num)
+
+
+def user_list(request):
+    current_page = request.GET.get('p', 1)
+    current_page = int(current_page)
+
+    page_obj = pagination.Page(current_page, len(LIST))
+    # page_obj = Page(current_page, len(LIST))
+    data = LIST[page_obj.start:page_obj.end]                       # 每页对应需要显示的数据，由列表切片来取出数据给前端展示
+    page_str = page_obj.page_str("/monitor/user_list/")
+    return render(request, 'user_list.html', {'li': data, 'page_str': page_str})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

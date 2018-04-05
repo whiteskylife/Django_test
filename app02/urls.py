@@ -28,6 +28,9 @@ urlpatterns = [
     re_path(r'^edit$', views.edit),
     re_path(r'^app$', views.app),
     re_path(r'^ajax_add_app$', views.ajax_add_app),
+    re_path(r'^edit_ajax_app$', views.edit_ajax_app),
+    re_path(r'^clear$', views.clear),
+    re_path(r'^user_list/', views.user_list),
 ]
 
 

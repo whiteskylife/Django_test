@@ -50,12 +50,15 @@
         </thead>
         <tbody>
             {% for app in app_list %}
-                <tr>
+                <tr aid="{{ app.id }}">
                     <td>{{ app.name }}</td>
                     <td>
                         {% for host in app.r.all %}
-                            <span class="host-tag">{{ host.hostname }}</span>
+                            <span class="host-tag" hid="{{ host.nid }}">{{ host.hostname }}</span>
                         {% endfor %}
+                    </td>
+                    <td>
+                        <a class="edit">编辑</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -65,7 +68,7 @@
     <div class="add-modal hide">
         <form id="add_form" method="post" action="/monitor/app">
             <div class="group">
-                <input id="app_name" type="text" placeholder="应用名称" name="app_name" />
+                <input id="app_name" type="text" placeholder="应用名称"  name="app_name"/>
             </div>
 
             <div class="group">
@@ -75,7 +78,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="submit" value="提交" />
+            <input type="submit" value="Form提交" />
             <input id="add_submit_ajax" type="button" value="Ajax提交" />
         </form>
     </div>
@@ -83,13 +86,11 @@
     <div class="edit-modal hide">
         <form id="edit_form" method="post" action="/monitor/app">
                 <input id="num" name="nid" type="text" style="display: none;"/>
-                <input type="text" placeholder="主机名" name="hostname" />
-                <input type="text" placeholder="IP" name="ip" />
-                <input type="text" placeholder="端口" name="port" />
+                <input type="text" placeholder="应用名称" id="edit_app_name" name="edit_app_name" />
 
-                <select id="sel" name="b_id">
-                    {% for op in b_list %}
-                        <option value="{{ op.id }}">{{ op.caption }}</option>
+                <select name="host_list" multiple>
+                    {% for op in host_list %}
+                        <option value="{{ op.nid }}">{{ op.hostname }}</option>
                     {% endfor %}
                 </select>
             <a id="ajax_submit_edit">确认编辑</a>
@@ -125,6 +126,32 @@
                     }
                 })
             });
+
+            $('.edit').click(function () {
+                $('.edit-modal, .shade').removeClass('hide');
+
+                var hid_list = [];
+                $(this).parent().prev().children().each(function () {
+                    var hid = $(this).attr('hid');
+                    hid_list.push(hid)
+                });
+                $('#edit_form').find('select').val(hid_list);
+
+                aid = $(this).parent().parent().attr('aid');    //取应用id方法，根据循环生成的标签中的固定标签来找，很重要
+
+                $('#ajax_submit_edit').click(function () {
+                    hid_list = $('#edit_form').find('select').val();        // 更新列表为更改的值
+                    $.ajax({
+                        url:'/monitor/edit_ajax_app',
+                        data:{'hid_list':hid_list, 'edit_app_name':$('#edit_app_name').val(), 'aid': aid},
+                        method: "POST",
+                        traditional:true,
+                        success:function (data) {
+                            console.log(data)
+                        }
+                    })
+                });
+            })
         })
     </script>
 </body>
