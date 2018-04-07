@@ -148,11 +148,6 @@ def clear(request):
 
 from django.utils.safestring import mark_safe
 
-# page_str = """
-#         <a href="/monitor/user_list/?p=1">1</a>
-#     <a href="/monitor/user_list/?p=2">2</a>
-#     <a href="/monitor/user_list/?p=3">3</a>
-#     """
 
 
 class Page:
@@ -251,28 +246,99 @@ for num in range(1, 198):
 def user_list(request):
     current_page = request.GET.get('p', 1)
     current_page = int(current_page)
-
-    page_obj = pagination.Page(current_page, len(LIST))
-    # page_obj = Page(current_page, len(LIST))
+    val = request.COOKIES.get('per_page_count', 10)     # 基于cookie实现动态指定每页显示多少条数据
+    val = int(val)
+    # page_obj = pagination.Page(current_page, len(LIST))
+    page_obj = Page(current_page, len(LIST), val)
     data = LIST[page_obj.start:page_obj.end]                       # 每页对应需要显示的数据，由列表切片来取出数据给前端展示
     page_str = page_obj.page_str("/monitor/user_list/")
     return render(request, 'user_list.html', {'li': data, 'page_str': page_str})
 
 
+user_info = {
+    'whisky': {'pwd': '123'},
+    'sky': {'pwd': '123'},
+}
 
 
+def login(request):
+    if request.method == "GET":
+        return render(request, 'login.html')
+    if request.method == "POST":
+        u = request.POST.get('user')
+        p = request.POST.get('pwd')
+        dic = user_info.get(u)
+        if not dic:
+            return render(request, 'login.html')
+        if dic['pwd'] == p:
+            res = redirect('/monitor/index/')
+            import datetime
+            current_date = datetime.datetime.utcnow()
+            current_date = current_date + datetime.timedelta(seconds=5)  # 设置cookie根据当前时间延迟5秒后过期
+            res.set_cookie('username111', u, expires=current_date)
+            return res
+        else:
+            return render(request, 'login.html')
 
 
+def auth(func):
+    def inner(request, *args, **kwargs):
+        v = request.COOKIES.get('username111')
+        if not v:
+            return redirect('/monitor/login/')
+        ret = func(request, *args, **kwargs)
+        return ret
+    return inner
 
 
+# -----------FBV装饰器--------------------------------
+@auth
+def index(request):
+    v = request.COOKIES.get('username111')      # 获取当前已经登录用户的cookie，cookie的key为：username111，value为whisky
+    return render(request, 'index.html', {'current_user': v})
 
 
+def cookie(request):
+    v = request.COOKIES['username111']         # 用户发数据携带的cookie，是一个字典
+    return HttpResponse(v)
 
 
+# --------- CBV装饰器 --------------
+from django import views
+
+# 导入jango的method_decorator方法实现类的装饰器
+from django.utils.decorators import method_decorator
 
 
+# class Order(views.View):
+#     @method_decorator(auth)         # 借助Django的方法实现类中的装饰器
+#     def get(self, request):
+#         v = request.COOKIES.get('username111')
+#         if not v:
+#             return redirect('/monitor/login/')
+#         return render(request, 'index.html', {'current_user': v})
+#     @method_decorator(auth)
+#     def post(self, request):
+#         v = request.COOKIES.get('username111')
+#         return render(request, 'index.html', {'current_user': v})
 
+@method_decorator(auth, name='dispatch')  # 直接装饰类，不用写装饰dispatch了
+class Order(views.View):
 
+    # @method_decorator(auth)                       # 可以直接装饰类，就不用再重写dispatch
+    # def dispatch(self, request, *args, **kwargs):
+    #     return super(Order, self).dispatch(request, *args, **kwargs)
+
+    # @method_decorator(auth)         # 借助Django的方法实现类中的装饰器, 可以直接在dispatch方法上加装饰器，下面的所有方法就都被装饰了
+    def get(self, request):
+        v = request.COOKIES.get('username111')
+        if not v:
+            return redirect('/monitor/login/')
+        return render(request, 'index.html', {'current_user': v})
+
+    def post(self, request):
+        v = request.COOKIES.get('username111')
+        return render(request, 'index.html', {'current_user': v})
 
 
 

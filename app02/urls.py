@@ -30,7 +30,11 @@ urlpatterns = [
     re_path(r'^ajax_add_app$', views.ajax_add_app),
     re_path(r'^edit_ajax_app$', views.edit_ajax_app),
     re_path(r'^clear$', views.clear),
+    re_path(r'^login/', views.login),
+    re_path(r'^index/', views.index),
+    re_path(r'^cookie/', views.cookie),
     re_path(r'^user_list/', views.user_list),
+    re_path(r'^order/', views.Order.as_view()),
 ]
 
 

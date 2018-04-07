@@ -18,11 +18,33 @@
 <body>
     <ul>
         {% for item in li %}
-            {% include 'li.html' %}
+            <li>{{ item }}</li>
         {% endfor %}
     </ul>
+    <div>
+        <select id="choose" onchange="ChangePageSize(this)">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+        </select>
+    </div>
     <div class="pagination">
         {{ page_str|safe }}
     </div>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script src="/static/jquery.cookie.js"></script>
+    <script>
+        $(function () {
+           var v = $.cookie('per_page_count', {'path': "/monitor/user_list/"});      // 记录上次select选中的值, 只影响当前页面
+           $('#choose').val(v)
+        });
+        function ChangePageSize(ths) {
+            var v = $(ths).val();
+            console.log(v);
+            $.cookie('per_page_count', v, {'path': "/monitor/user_list/"});  // JS直接操作cookie，把select中用户选择的value设置为cookie的值，再传给后台
+            location.reload()
+        }
+    </script>
 </body>
 </html>
