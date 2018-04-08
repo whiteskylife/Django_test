@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <form action="/app03/csrf/" method="post">
+        {% csrf_token %}
+        <input type="text" name="user" />
+        <input type="text" name="pwd" />
+        <input type="submit" value="提交"/>
+        <input id="btn1" type="button" value="按钮" />
+        <input id="btn2" type="button" value="按钮" />
+    </form>
+
+
+
+
+{#    <input type="button" onclick="Do();"  value="Do it"/>#}
+
+    <script src="/static/jquery-1.9.1.js"></script>
+    <script src="/static/jquery.cookie.js"></script>
+    <script>
+        var csrftoken = $.cookie('csrftoken');
+        $(function () {
+            $.ajaxSetup({                                            // 对所有ajax请求进行配置,只需设置一次请求头X-CSRFToken后面所有的ajax请求无需配置请求头了
+                beforeSend: function(xhr, settings) {              // beforeSend在ajax请求发送之前执行后面的函数，settings代表下面ajax中的所有参数配置
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                });
+
+            $('#btn1').click(function () {
+                $.ajax({
+                    url: '/app03/csrf/',
+                    method: 'POST',
+                    data:{'user':'root','pwd':'123'},
+{#                    headers:{'X-CSRFtoken':csrftoken}, // X-CSRFtoken请求头中加上这个参数，值为cookie中csrftoken的值，则能通过csrf验证#}
+                    success:function (arg) {
+                        console.log(arg)
+                    }
+                })
+            });
+            $('#btn2').click(function () {
+                $.ajax({
+                    url: '/app03/csrf/',
+                    method: 'POST',
+                    data:{'user':'root','pwd':'123'},
+{#                    headers:{'X-CSRFtoken':csrftoken}, // X-CSRFtoken请求头中加上这个参数，值为cookie中csrftoken的值，则能通过csrf验证#}
+                    success:function (arg) {
+                        console.log(arg)
+                    }
+                })
+            });
+        })
+    </script>
+
+    <script type="text/javascript">
+        var csrftoken = $.cookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({                                            // 对所有ajax请求进行配置
+            beforeSend: function(xhr, settings) {              // beforeSend在ajax请求发送之前执行后面的函数
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {      //过滤后只有POST请求需要加csrftoken
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        function Do(){
+
+            $.ajax({
+                url:"/app01/test/",
+                data:{id:1},
+                type:'POST',
+                success:function(data){
+                    console.log(data);
+                }
+            });
+
+        }
+    </script>
+</body>
+</html>

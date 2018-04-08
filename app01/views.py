@@ -102,3 +102,7 @@ def orm(request):
     # models.UserInfo.objects.filter(id=5).update(password='66666666666666666')
 
     return HttpResponse('orm')
+
+
+def upload(request):
+    pass
