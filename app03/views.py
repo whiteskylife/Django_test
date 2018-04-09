@@ -52,5 +52,12 @@ def csrf(request):
     else:
         return HttpResponse('!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
+class Foo:
+    def render(self):
+        return HttpResponse('OK')
 
+
+def test(request):
+    print('in test Middle view')
+    return Foo()
 
