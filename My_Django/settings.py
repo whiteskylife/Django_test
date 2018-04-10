@@ -50,9 +50,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'Middle.m1.Row1',
-    'Middle.m1.Row2',
-    'Middle.m1.Row3',
+    # 'Middle.m1.Row1',
+    # 'Middle.m1.Row2',
+    # 'Middle.m1.Row3',
 ]
 
 ROOT_URLCONF = 'My_Django.urls'
@@ -139,3 +139,9 @@ STATICFILES_DIRS = (
 )
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR,  'templates'),)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache'),
+    }
+}

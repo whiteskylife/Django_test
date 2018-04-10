@@ -61,3 +61,12 @@ def test(request):
     print('in test Middle view')
     return Foo()
 
+
+from django.views.decorators.cache import cache_page
+
+
+# @cache_page(10)             # 10s缓存时间
+def cache(request):
+    import time
+    ctime = time.time()
+    return render(request, 'cache.html', {'ctime': ctime})

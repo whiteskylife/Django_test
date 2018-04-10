@@ -25,6 +25,7 @@ urlpatterns = [
     re_path(r'^logout/$', views.logout),
     re_path(r'^csrf/$', views.csrf),
     re_path(r'^test/$', views.test),
+    re_path(r'^cache/$', views.cache),
 ]
 
 
