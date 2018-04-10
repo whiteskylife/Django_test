@@ -26,6 +26,7 @@ urlpatterns = [
     re_path(r'^csrf/$', views.csrf),
     re_path(r'^test/$', views.test),
     re_path(r'^cache/$', views.cache),
+    re_path(r'^signal/$', views.signal),
 ]
 
 

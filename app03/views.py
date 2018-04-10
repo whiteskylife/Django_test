@@ -1,5 +1,6 @@
 from django.shortcuts import render,HttpResponse,redirect
 from app03 import models
+
 # Create your views here.
 
 
@@ -70,3 +71,14 @@ def cache(request):
     import time
     ctime = time.time()
     return render(request, 'cache.html', {'ctime': ctime})
+
+
+def signal(request):
+
+    from sg import custom_signal_name  # 导入自定义信号
+
+    custom_signal_name.send(sender='asdasd', aaa=123, bbb=456)
+
+    return HttpResponse('this is a test for Django-signal ')
+
+
