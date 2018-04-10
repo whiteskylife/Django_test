@@ -27,6 +27,7 @@ urlpatterns = [
     re_path(r'^test/$', views.test),
     re_path(r'^cache/$', views.cache),
     re_path(r'^signal/$', views.signal),
+    re_path(r'^fm/$', views.fm),
 ]
 
 

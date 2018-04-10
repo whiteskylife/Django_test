@@ -82,3 +82,39 @@ def signal(request):
     return HttpResponse('this is a test for Django-signal ')
 
 
+
+# -------------------FORM------------------------
+
+
+from django import forms
+
+
+class FM(forms.Form):
+    """
+        下面的所有字段名字必须和前端的变量name的值相同，否则拿不到值
+        字段本身只用作验证的功能，fields负责生成HTML
+    """
+    user = forms.CharField(error_messages={'required': '用户名不能为空.'})
+    pwd = forms.CharField(
+        max_length=12,
+        min_length=6,
+        error_messages={'required': '密码不能为空', 'min_length': '密码长度不能小于6', 'max_length': '密码长度不能大于12'}
+    )
+    email = forms.EmailField(error_messages={'required': '邮箱不能为空.', 'invalid': '邮箱格式错误'})
+
+
+def fm(request):
+    if request.method == "GET":
+        obj = FM()
+        return render(request, 'fm.html', {'obj': obj})
+    elif request.method == "POST":
+        obj = FM(request.POST)
+        r1 = obj.is_valid()     # is_valid方法：对form中每一个字段逐一进行验证
+        if r1:
+            print(obj.cleaned_data)
+        else:
+            # print(obj.errors.as_json())
+            # print(obj.errors['user'])       # errors方法包含了所有的错误信息,取值通过字典方式
+            print(obj.errors)
+        return render(request, 'fm.html', {'obj': obj})
+
