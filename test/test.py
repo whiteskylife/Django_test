@@ -21,10 +21,8 @@
 # obj.m1()
 # print(obj)
 #
-#
-#
 
+v = [lambda x: i*x for i in range(10)]
 
-
-
-
+for func in v:
+    print(func(2))
