@@ -106,6 +106,9 @@ class FM(forms.Form):
 def fm(request):
     if request.method == "GET":
         obj = FM()
+        ret = models.User.objects.defer('user')
+        ret1 = models.User.objects.all()
+        print(ret,'------',ret1)
         return render(request, 'fm.html', {'obj': obj})
     elif request.method == "POST":
         obj = FM(request.POST)
@@ -118,3 +121,36 @@ def fm(request):
             print(obj.errors)
         return render(request, 'fm.html', {'obj': obj})
 
+
+
+
+
+'''
+def test1(request):
+
+    users = models.User.objects.all()
+    for row in users:
+        print(row.user, row.pwd, row.ut_id)
+        print(row.ut.name)   # 再发起一次SQL请求，如果有10个用户，每次循环执行一次跨表操作，整个循环将发起11次SQL请求
+
+    users = models.User.objects.all().values('user', 'pwd', 'ut__name')
+    for row in users:            # 这种方式跨表只发起一次SQL请求，单反回的非queryset对象，而是字典
+        print(row.user, row.pwd, row.ut_id)
+
+    users = models.User.objects.all().select_related('ut')      # 一次性把关联的ut表数据取过来再进行操作，其他的关联表都不取，不加参数默认取所有关联的表的数据
+    for row in users:
+        print(row.user, row.pwd, row.ut_id)
+        print(row.ut.name)                                   # 如果有10个用户，整个循环将发起1次SQL请求
+
+
+# prefetch_related
+    users = models.User.objects.filter(id__gt=30).prefetch_related('ut')      # 一次取到所有关联表数据
+    # prefetch 将做两步操作：
+    # select * from users where id > 30
+    # jango获取上一条SQL所有的ut_id,假设ut_id=[1, 2]
+    # select * from user_type where id in [1,2]
+
+    for row in users:
+        print(row.user, row.pwd, row.ut_id)
+        print(row.ut.name)                                   # 如果有10个用户，整个循环将发起1次SQL请求
+'''
