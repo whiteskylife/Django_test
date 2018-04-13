@@ -7,11 +7,16 @@
 <body>
     <form action="/app03/fm/" method="POST">
         {% csrf_token %}
-        <p>{{ obj.user }} {{ obj.errors.user.0 }}</p>
-        <p>{{ obj.pwd }} {{ obj.errors.pwd.0 }}</p>
+        <p>{{ obj.user.label }} {{ obj.user }} {{ obj.errors.user.0 }} {{ obj.user.help_text }}</p>
+        <p>{{ obj.pwd.label }} {{ obj.pwd }} {{ obj.errors.pwd.0 }}</p>
         <p>{{ obj.email }} {{ obj.errors.email.0 }}</p>
         <p><input type="submit" value="提交"></p>
 
+
+{#        <p>{{ obj.f }} {{ obj.errors.f.0 }}</p>#}
+
+        <p>{{ obj.city }}</p>
+        <p>{{ obj.city1 }}</p>
     </form>
 </body>
 </html>

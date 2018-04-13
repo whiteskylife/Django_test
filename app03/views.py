@@ -87,6 +87,8 @@ def signal(request):
 
 
 from django import forms
+from django.forms import widgets    # widgets插件相关功能,包括了HTMl中INPUT、select、checkbox、radio等等全部标签
+from django.forms import fields     # fields:字段相关功能
 
 
 class FM(forms.Form):
@@ -94,33 +96,86 @@ class FM(forms.Form):
         下面的所有字段名字必须和前端的变量name的值相同，否则拿不到值
         字段本身只用作验证的功能，fields负责生成HTML
     """
-    user = forms.CharField(error_messages={'required': '用户名不能为空.'})
-    pwd = forms.CharField(
+    user = fields.CharField(
+        error_messages={'required': '用户名不能为空.'},
+        widget=widgets.Textarea(attrs={'class': 'c1'}),     # widget设置表单字段在html页面的类型,attrs给表单标签设置属性
+        label='用户名',
+        initial='root',
+        help_text='请输入用户名(手机号、邮箱)'
+    )
+
+    pwd = fields.CharField(
         max_length=12,
         min_length=6,
-        error_messages={'required': '密码不能为空', 'min_length': '密码长度不能小于6', 'max_length': '密码长度不能大于12'}
+        error_messages={'required': '密码不能为空', 'min_length': '密码长度不能小于6', 'max_length': '密码长度不能大于12'},
+        widget=widgets.PasswordInput(attrs={'class': 'c2'}),
+        label='密码',
     )
-    email = forms.EmailField(error_messages={'required': '邮箱不能为空.', 'invalid': '邮箱格式错误'})
+    email = fields.EmailField(error_messages={'required': '邮箱不能为空.', 'invalid': '邮箱格式错误'})  # 自定义错误信息
+
+    f = fields.FileField()
+
+    city = fields.ChoiceField(
+        choices=[(0, '上海'), (1, '北京'), (2, '东莞')]
+    )
+    city1 = fields.MultipleChoiceField(
+        choices=[(0, '上海'), (1, '北京'), (2, '东莞')]
+    )
 
 
 def fm(request):
     if request.method == "GET":
-        obj = FM()
-        ret = models.User.objects.defer('user')
-        ret1 = models.User.objects.all()
-        print(ret,'------',ret1)
-        return render(request, 'fm.html', {'obj': obj})
+        '''
+        打开一个新的编辑页面把默认值都获取到：创建个字典，把类中的字段一一写为字典的key，字典的值即为默认值，可以通过models从数据库获取
+        传递对象到前端时加上initial=dic参数即可设置默认值
+        注意：字段名必须和自定义类中的字段一一对应
+        '''
+        dic = {
+            'user': 'r1',
+            'pwd': '123123',
+            'email': 'asd@asd',
+            'city1': 1,
+            'city2': [1, 2],
+        }
+        obj = FM(initial=dic)
+        return render(request, 'fm.html', {'obj': obj})  # 打开页面，并将表单验证类对象传到html生成表单标签，利用表单类自动创建表单标签
     elif request.method == "POST":
-        obj = FM(request.POST)
-        r1 = obj.is_valid()     # is_valid方法：对form中每一个字段逐一进行验证
+        obj = FM(request.POST)                   # 创建验证表单类，将用户请求POST对象传进Form类中进行表单验证
+        r1 = obj.is_valid()                      # is_valid方法：对form中每一个字段逐一进行验证,返回验证是否通过的布尔值
         if r1:
-            print(obj.cleaned_data)
+            print(obj.cleaned_data)                         # 以字典的形式返回正确信息
+            models.UserInf.objects.create(**obj.cleaned_data) # 利用cleaned_data实现注册
         else:
             # print(obj.errors.as_json())
             # print(obj.errors['user'])       # errors方法包含了所有的错误信息,取值通过字典方式
             print(obj.errors)
         return render(request, 'fm.html', {'obj': obj})
 
+
+class UserInfoForm(forms.Form):
+    user = fields.CharField(
+        required=False,
+        widget=widgets.Textarea(attrs={'class': 'c1'})
+    )
+
+    pwd = fields.CharField(
+        max_length=12,
+        widget=widgets.PasswordInput(attrs={'class': 'c1'})
+    )
+
+    user_type = fields.ChoiceField(
+        # choices=[(1, '普通用户'), (2, '超级用户')],
+        choices=models.UserType.objects.values_list('id', 'name'),
+        widget=widgets.Select
+    )
+
+
+def form(request):
+    if request.method == "GET":
+        obj = UserInfoForm()
+        obj.fields['user_type'].choices = models.UserType.objects.values_list('id', 'name')
+        # print(models.UserType.objects.values_list('id', 'name'),)
+        return render(request, 'index.html', {'obj': obj})
 
 
 

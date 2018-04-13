@@ -28,6 +28,7 @@ urlpatterns = [
     re_path(r'^cache/$', views.cache),
     re_path(r'^signal/$', views.signal),
     re_path(r'^fm/$', views.fm),
+    re_path(r'^form/$', views.form),
 ]
 
 

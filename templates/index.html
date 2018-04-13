@@ -3,33 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <style>
-        body{
-            margin:0;
-        }
 
-        .menu{
-            display: block;
-            padding: 5px;
-        }
-    </style>
 </head>
 <body>
-    <div style="height: 48px; background-color: black; color: white;">
-        <h1 style="margin: 0">whisky-background</h1>
-    </div>
-    <div>
-        <div style="position: absolute; top: 48px; bottom: 0; left: 0; width: 200px;background-color: pink">
-            <a class="menu" href="/cmdb/user_info/">用户管理</a>
-            <a class="menu" href="/cmdb/user_group/">用户组管理</a>
-        </div>
-        <div style="position: absolute; top: 48px; left: 210px; bottom: 0; right: 0;overflow: auto;">
-{#            <h1>欢饮登陆： {{ current_user }}</h1>#}
-                <h1> {{ request.session.username }} </h1>
-                        <a href="/app03/logout/">注销</a>
-
-        </div>
-    </div>
+    {% csrf_token %}
+    <p>{{ obj.user_type }}</p>
 </body>
 </html>
 
