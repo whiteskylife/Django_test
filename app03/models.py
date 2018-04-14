@@ -11,6 +11,9 @@ class UserInf(models.Model):
 class UserType(models.Model):
     name = models.CharField(max_length=32)
 
+    def __str__(self):
+        return self.name
+
 
 class User(models.Model):
 

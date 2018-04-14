@@ -151,7 +151,7 @@ def fm(request):
             print(obj.errors)
         return render(request, 'fm.html', {'obj': obj})
 
-
+'''
 class UserInfoForm(forms.Form):
     user = fields.CharField(
         required=False,
@@ -166,20 +166,24 @@ class UserInfoForm(forms.Form):
     user_type = fields.ChoiceField(
         # choices=[(1, '普通用户'), (2, '超级用户')],
         choices=models.UserType.objects.values_list('id', 'name'),
-        widget=widgets.Select
     )
 
+    user_type2 = fields.CharField(
+        # widget=widgets.Select(choices=[(0, '上海'), (1, '北京'), (2, '东莞')])
+        widget=widgets.Select(choices=models.UserType.objects.values_list('id', 'name'))
+    )
 
-def form(request):
-    if request.method == "GET":
-        obj = UserInfoForm()
-        obj.fields['user_type'].choices = models.UserType.objects.values_list('id', 'name')
-        # print(models.UserType.objects.values_list('id', 'name'),)
-        return render(request, 'index.html', {'obj': obj})
+    user_type3 = fields.MultipleChoiceField(
+        # choices=[(1, '普通用户'), (2, '超级用户')],
+        choices=models.UserType.objects.values_list('id', 'name'),
+    )
 
+    user_type4 = fields.CharField(
+        # widget=widgets.SelectMultiple(choices=[(0, '上海'), (1, '北京'), (2, '东莞')])
+        widget=widgets.SelectMultiple(choices=models.UserType.objects.values_list('id', 'name'))
+    )
 
-
-
+'''
 '''
 def test1(request):
 
@@ -208,4 +212,44 @@ def test1(request):
     for row in users:
         print(row.user, row.pwd, row.ut_id)
         print(row.ut.name)                                   # 如果有10个用户，整个循环将发起1次SQL请求
+'''
+
+from app03.forms import UserInfoForm
+
+
+def form(request):
+    if request.method == "GET":
+        obj = UserInfoForm({'user_type': '2'})
+        # obj.fields['user_type'].choices = models.UserType.objects.values_list('id', 'name')
+        # print(obj.fields)
+        # print(models.UserType.objects.values_list('id', 'name'),)
+        return render(request, 'index.html', {'obj': obj})
+
+
+from app03.forms import RegisterForm
+
+
+#
+def register(request):
+    if request.method == "GET":
+        obj = RegisterForm()
+        return render(request, 'index.html', {'obj': obj})
+    elif request.method == "POST":
+        # obj = RegisterForm(initial={'user': request.POST.get('user')})      # 提交验证失败保留用户名
+        obj = RegisterForm(request.POST)      # 提交验证失败保留用户名
+        obj.is_valid()
+        print(obj.errors)
+        return render(request, 'index.html', {'obj': obj})
+
+
+
+
+from django.core.exceptions import NON_FIELD_ERRORS
+'''
+ {
+    '__all__':[],    # 整体验证clean方法的错误信息放在这里 , 也可以写成NON_FIELD_ERRORS(点击看源码可知代指字符串__all__)
+     "email": [{"code": "required", "message": "This field is required."}],
+  "user": [{"code": "required", "message": "This field is required."}],
+  "pwd": [{"code": "required", "message": "This field is required."}]
+  }
 '''
