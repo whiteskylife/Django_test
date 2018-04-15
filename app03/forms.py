@@ -57,39 +57,33 @@ class RegisterForm(forms.Form):
         widget=widgets.PasswordInput(attrs={'class': 'c1'})
     )
 
-    email = fields.EmailField(validators=[])
 
-    def clean_user(self):
+
+    def clean(self):
         """
-         正则验证通过后，验证用户是否存在
+        全局钩子函数clean，能拿到cleaned_data中所有验证通过的数据，对整体进行验证，可以进一步进行登录验证
         :return:
         """
-        c = models.UserInf.objects.filter(user=self.cleaned_data.get('user')).count()
-        # print(self.fields.items(), '-----------------------')
-        if not c:
-            return self.cleaned_data['user']
+        # c = models.User.objects.filter(user=self.cleaned_data['user'], pwd=self.cleaned_data['pwd']).count()
+        # a = {'user': self.cleaned_data.get('user'), 'pwd': self.cleaned_data.get('pwd')}
+        print(self.cleaned_data,'cleaned_data -----2222222222222222222222222')
+        c = models.User.objects.filter(user=self.cleaned_data.get('user'), pwd=self.cleaned_data.get('pwd')).count()
+        print(c, 'this is c---------')
+        if c:
+            return self.cleaned_data
         else:
-            raise ValidationError('用户名已存在！', code='xxx')
-
-    def clean_eamil(self):
-        return self.cleaned_data['email']
-
-    # def clean(self):
-    #     """
-    #     正则验证通过后，对整体进行验证
-    #     :return:
-    #     """
-    #     c = models.User.objects.filter(name=self.cleaned_data['user'], pwd=self.cleaned_data['pwd']).count()
-    #     if c:
-    #         return self.cleaned_data
-    #     else:
-    #         raise ValidationError('用户名或密码错误')
+            raise ValidationError('用户名或密码错误', code='xxx')
 
 '''
+小结：
 form 验证流程：
 1、前端提交数据到后台form
 2、循环判断所有字段根据正则表达式（默认或自定义正则）
 3、执行字段对应的钩子函数，再判断下一个字段（正则、钩子函数）
 4、所有字段循环完毕，最后执行clean钩子函数、post钩子
 
+客户端POST提交的数据作为我们自定义Form类的参数实例化的得到的form对象可以帮助我们进行表单验证，他验证的流程大致是这样的
+    循环遍历用户提交的POST表单中的数据，取出存在于自定义的Form类中的字段，比如name，password。
+    将取出的字段按照自定义的Form类中字段的验证规则（包括是否为空、长短、以及正则等）进行验证
+    如果Form类中定义了钩子函数cleaned_字段名，就会调用钩子函数，对指定的字段进行更精细的验证（比如用户登陆）
 '''

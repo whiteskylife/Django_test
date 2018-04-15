@@ -235,8 +235,7 @@ def register(request):
         obj = RegisterForm()
         return render(request, 'index.html', {'obj': obj})
     elif request.method == "POST":
-        # obj = RegisterForm(initial={'user': request.POST.get('user')})      # 提交验证失败保留用户名
-        obj = RegisterForm(request.POST)      # 提交验证失败保留用户名
+        obj = RegisterForm(request.POST, initial={'user': request.POST.get('user')})     # 提交验证失败保留用户名
         obj.is_valid()
         print(obj.errors)
         return render(request, 'index.html', {'obj': obj})
