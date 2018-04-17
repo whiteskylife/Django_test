@@ -3,22 +3,29 @@ from django.db import models
 # Create your models here.
 
 
-class UserInf(models.Model):
-
-    user = models.CharField(max_length=32)
-
-
-class UserType(models.Model):
+class Publish(models.Model):
     name = models.CharField(max_length=32)
+    city = models.CharField(max_length=32)
 
     def __str__(self):
         return self.name
 
 
-class User(models.Model):
+class Book(models.Model):
+    name = models.CharField(max_length=20)
+    price = models.IntegerField()
+    pub_date = models.DateField()
+    publish = models.ForeignKey("Publish", on_delete=models.CASCADE)
+    # publish1 = models.ForeignKey(Publish, on_delete=models.CASCADE) # Publish不加引号，Publish要放在Book类上面
+    authors = models.ManyToManyField('Author')
 
-    user = models.CharField(max_length=32)
-    pwd = models.CharField(max_length=64)
-    ut = models.ForeignKey(to='UserType', to_field='id', on_delete=models.PROTECT)
+    def __str__(self):
+        return self.name
 
-    t = models.ManyToManyField('self')
+
+class Author(models.Model):
+    name = models.CharField(max_length=32)
+    age = models.IntegerField(default=20)
+
+    def __str__(self):
+        return self.name

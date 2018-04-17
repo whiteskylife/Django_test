@@ -15,21 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from app03 import views
+from app03.views import test
+from app03.views import account
 from django.conf.urls import url, include
 
 
 urlpatterns = [
-    re_path(r'^login/', views.login),
-    re_path(r'^index/', views.index),
-    re_path(r'^logout/$', views.logout),
-    re_path(r'^csrf/$', views.csrf),
-    re_path(r'^test/$', views.test),
-    re_path(r'^cache/$', views.cache),
-    re_path(r'^signal/$', views.signal),
-    re_path(r'^fm/$', views.fm),
-    re_path(r'^form/$', views.form),
-    re_path(r'^register/$', views.register),
+    re_path(r'^login.html$', account.login),
+    re_path(r'^test$', test.login),
+    # re_path(r'^index/', test.index),
+    # re_path(r'^logout/$', test.logout),
+    # re_path(r'^csrf/$', test.csrf),
+    # re_path(r'^test/$', test.test),
+    # re_path(r'^cache/$', test.cache),
+    # re_path(r'^signal/$', test.signal),
+    # re_path(r'^fm/$', test.fm),
+    # re_path(r'^form/$', test.form),
+    # re_path(r'^register/$', test.register),
 ]
 
 
