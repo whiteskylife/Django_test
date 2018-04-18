@@ -29,3 +29,8 @@ class Author(models.Model):
 
     def __str__(self):
         return self.name
+
+#
+# class Book_Author(models.Model):
+#     book = models.ForeignKey('Book', on_delete=models.CASCADE)
+#     author = models.ForeignKey('Author', on_delete=models.CASCADE)

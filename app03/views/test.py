@@ -99,19 +99,94 @@ def login(request):
 
     # 多对多：
     # 查询：
-    # 需求：查询书名是Linux的作者名字
-        a = models.Book.objects.get(name='Linux').authors.all()
-        print(a)        # <QuerySet [<Author: alex>, <Author: yuan>]> , all()结果models类中需要加上__str__方法
- """
+        # 需求：查询书名是Linux的作者名字
+            a = models.Book.objects.get(name='Linux').authors.all()
+            print(a)        # <QuerySet [<Author: alex>, <Author: yuan>]> , all()结果models类中需要加上__str__方法
 
-    # 需求：找出yuan作者写过的书：
-    # 错误写法：a = models.Author.objects.filter(name='yuan').book_set.values("name")  # filter反向查询_set跨表时不能用在filter后面，filter结果是多个QuerySet对象
-    # 方式一：_set反向跨表查询
-    # a = models.Author.objects.get(name='yuan').book_set.values("name")
-    # print(a)
-    # 方式二：双下划线正向跨表查询
-    # a = models.Book.objects.filter(authors__name='yuan').values("name")
-    # print(a)
 
+        # 需求：找出yuan作者写过的书：
+        # 错误写法：a = models.Author.objects.filter(name='yuan').book_set.values("name")  # filter反向查询_set跨表时不能用在filter后面，filter结果是多个QuerySet对象
+        # 方式一：_set反向跨表查询
+            a = models.Author.objects.get(name='yuan').book_set.values("name")
+            print(a)
+        # 方式二：双下划线正向跨表查询
+            a = models.Book.objects.filter(authors__name='yuan').values("name")
+        # print(a)
+
+    # 添加：
+        # 需求：添加一个作者yuan到书名为GO的书
+            autho_obj = models.Author.objects.get(name="yuan")
+            models.Book.objects.get(name="GO").authors.add(autho_obj)
+
+        # 需求：多对多操作更改书名为GO的书的作者为所有人：
+            b = models.Author.objects.all()
+            a = models.Book.objects.get(name="GO").authors.add(*b)
+            print(a)
+
+    # 删除
+        # 需求：删除GO书的所有作者：
+            # author_obj = models.Author.objects.all()
+            # models.Book.objects.get(name="GO").authors.remove(*author_obj)
+            # print(author_obj)
+
+        # 需求：删除GO书的yuan作者
+        #     方式1：models.Book.objects.get(name="GO").authors.remove(models.Author.objects.get(name="yuan")) # 通过对象绑定来建立关系
+        #     方式二：models.Book.objects.get(name="GO").authors.remove(2)
+
+
+    # 自行创建第三张表
+    # 添加数据：models.Book_Author.objects.create(book_id=2, author_id=3)
+        # 需求：查询书名为python的作者,通过对象方式，反向跨表_set
+                #book_obj = models.Book.objects.get(name='python')
+                #a = book_obj.book_author_set.values("author__name")
+
+        # 需求：查找作者alex出过的书籍和价格
+        # 方式一：
+        #     a = models.Author.objects.get(name='alex').book_author_set.values("book__name", "book__price")
+        #     print(a)  # <QuerySet [{'book__price': 77, 'book__name': 'Linux运维'}, {'book__price': 77, 'book__name': 'GO'}]>
+        # 方式二：通过自建第三张表查询（不推荐）
+        #     a = models.Book.objects.filter(book_author__author__name="alex").values('name', 'price')
+        #     print(a) # <QuerySet [{'price': 77, 'name': 'Linux运维'}, {'price': 77, 'name': 'GO'}]>
+
+        # 方式三：利用ManyToManyField字段跨表查询
+        #     a = models.Book.objects.filter(authors__name='alex').values('name', 'price')
+        #     print(a)
+
+
+    # 分组聚合查询
+
+    #聚合查询
+    # 求出所有书籍的平均价格
+    #     a = models.Book.objects.all().aggregate(Avg('price'))
+    #     b = models.Book.objects.all().aggregate(Sum('price'))
+    # 求出alex写的书籍的总价格
+    #     c = models.Book.objects.filter(authors__name='alex').aggregate(alex_money=Sum('price'))  # alex_money设置查询结果字段的名字
+    #     print(c)
+
+    #分组查询：
+    # 求出每一个作者出的全部书的价格和
+    #     ret = models.Book.objects.values("authors__name").annotate(Sum('price'))
+    #                   values:按照authors__name进行分组；annotate用来分组，Sum对分组后每一个组进行求和
+    #     print(ret)
+
+    # 查询各个出版社最便宜的书籍价格
+        # a = models.Publish.objects.values("name").annotate(Min('book__price'))
+        # print(a)
+"""
+
+    # F 使用查询条件的值,专门取对象中某列值的操作
+    from django.db.models import F,Q
+    # 所有书籍价格+10
+    # models.Book.objects.all().update(price=F('price')+10)
+
+    # Q 构建搜索条件
+
+    a = models.Book.objects.filter(Q(price=97) | Q(name='GO'))      # 或
+    b = models.Book.objects.filter(~Q(name='GO'))                   # 非
+    c = models.Book.objects.filter(Q(name__contains="G"))
+
+    # Q查询结合关键字查询，Q查询要放在前
+    d = models.Book.objects.filter(Q(name='GO'), price=97).iterator()
+    print(d)
     return HttpResponse('ooo')
 
