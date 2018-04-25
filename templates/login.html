@@ -13,31 +13,47 @@
     </style>
 </head>
 <body>
-    <form id="fm">
+{#    <form id="fm">#}
+{#        {% csrf_token %}#}
+{#        <p><input type="text" name="username" /></p>#}
+{#        <p><input type="password" name="password" /></p>#}
+{#        <a id="submit">提交</a>#}
+{#    </form>#}
+{#    <script src="/static/jquery-1.12.4.js"></script>#}
+{#    <script>#}
+{#        $(function () {#}
+{#            $('#submit').click(function () {#}
+{#                $.ajax({#}
+{#                    url:'/app03/login.html',#}
+{#                    type: 'POST',#}
+{#                    data: $('#fm').serialize(),#}
+{#                    success:function (arg) {#}
+{#                        console.log(arg);#}
+{#                        arg = JSON.parse(arg);       //字符串转换为对象#}
+{#                        console.log(arg);#}
+{#                    },#}
+{#                    error:function () {#}
+{##}
+{#                    }#}
+{#                })#}
+{#            })#}
+{#        })#}
+{#    </script>#}
+    <form action="/app03/index.html" method="post">
         {% csrf_token %}
-        <p><input type="text" name="username" /></p>
-        <p><input type="password" name="password" /></p>
-        <a id="submit">提交</a>
+        {{ obj.as_p }}
+            <input type="submit" value="提交" />
     </form>
-    <script src="/static/jquery-1.12.4.js"></script>
-    <script>
-        $(function () {
-            $('#submit').click(function () {
-                $.ajax({
-                    url:'/app03/login.html',
-                    type: 'POST',
-                    data: $('#fm').serialize(),
-                    success:function (arg) {
-                        console.log(arg);
-                        arg = JSON.parse(arg);       //字符串转换为对象
-                        console.log(arg);
-                    },
-                    error:function () {
 
-                    }
-                })
-            })
-        })
+    <div class="col-xs-5">
+        <h1 style="color: black">验证码</h1>
+        <img src="/app03/check_code.html" onclick="changeCheckCode(this);">
+    </div>
+
+    <script>
+        function changeCheckCode(ths){
+            ths.src = ths.src +  '?';
+        }
     </script>
 </body>
 </html>

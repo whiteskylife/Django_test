@@ -1,7 +1,9 @@
-from django.shortcuts import render,HttpResponse,redirect
+from django.shortcuts import render, HttpResponse, redirect
 from app03 import models
+from app03.models import *
 # Create your views here.
 from django.db.models import Count, Avg, Max, Min, Sum
+
 
 def login(request):
     """
@@ -172,7 +174,7 @@ def login(request):
     # 查询各个出版社最便宜的书籍价格
         # a = models.Publish.objects.values("name").annotate(Min('book__price'))
         # print(a)
-"""
+
 
     # F 使用查询条件的值,专门取对象中某列值的操作
     from django.db.models import F,Q
@@ -188,5 +190,56 @@ def login(request):
     # Q查询结合关键字查询，Q查询要放在前
     d = models.Book.objects.filter(Q(name='GO'), price=97).iterator()
     print(d)
-    return HttpResponse('ooo')
 
+    # citys = City.objects.all()
+    # for c in citys:
+    #     print(c.province)
+# 执行的SQL查询：
+#     SELECT `app03_city`.`id`, `app03_city`.`name`, `app03_city`.`province_id` FROM `app03_city
+#     SELECT `app03_province`.`id`, `app03_province`.`name` FROM `app03_province` WHERE `app03_province`.`id` = 1
+#     SELECT `app03_province`.`id`, `app03_province`.`name` FROM `app03_province` WHERE `app03_province`.`id` = 1
+#     SELECT `app03_province`.`id`, `app03_province`.`name` FROM `app03_province` WHERE `app03_province`.`id` = 2
+
+# 如果使用select_related()函数：
+#     citys_select_related = City.objects.all().select_related()
+#     for i in citys_select_related:
+#         print(i.province)
+# 执行的SQL查询：
+# SELECT
+# 	`app03_city`.`id`,
+# 	`app03_city`.`name`,
+# 	`app03_city`.`province_id`,
+# 	`app03_province`.`id`,
+# 	`app03_province`.`name`
+# FROM
+# 	`app03_city`
+# INNER JOIN `app03_province` ON (
+# 	`app03_city`.`province_id` = `app03_province`.`id`
+# )
+#     就只有一次SQL查询，显然大大减少了SQL查询的次数
+
+    # obj = Person.objects.select_related().get()
+    # print(obj.living.province)
+
+    # obj = Person.objects.get(firstname=u"张", lastname=u"三").select_related('hometown__name')
+    # obj1 = Person.objects.get(firstname=u"张", lastname=u"三").living.province.name
+    # obj2 = Person.objects.get(firstname=u"张", lastname=u"三").hometown.name
+    # print(obj1, obj2)
+
+    obj3 = Person.objects.select_related('living__province', 'hometown__province').get(firstname=u"张", lastname=u"三")   # 在1.7以前你只能这样做
+    print(obj3.living.province.name)
+    print(obj3.hometown.province.name)
+
+    # obj4 = Person.objects.select_related('living__province').select_related('hometown__province').get(firstname=u"张", lastname=u"三")
+    # print(obj4.living.province.name)
+    # print(obj4.hometown.province.name)
+    """
+
+    # hb = Province.objects.get(name=u"湖北省")
+    # people = []
+    # for city in hb.city_set.all():
+    #     people.extend(city.birth.all())
+
+
+
+    return HttpResponse('ooo')

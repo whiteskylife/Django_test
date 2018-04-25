@@ -24,3 +24,16 @@ class Application(models.Model):
     name = models.CharField(max_length=32)
     r = models.ManyToManyField('Host')          # 创建第三个关系表，表名：app02_application_r
 
+
+class Boy_Boy_Boy(models.Model):
+    name = models.CharField(max_length=32)
+
+
+class Girl_Girl_Girl(models.Model):
+    name = models.CharField(max_length=32)
+    m = models.ManyToManyField('Boy_Boy_Boy', through='Love_Love_Love', through_fields=('g', 'b'))  # 只让其生成3张表，如果不加后面产生生成4张表
+
+
+class Love_Love_Love(models.Model):
+    b = models.ForeignKey('Boy_Boy_Boy', on_delete=models.PROTECT)
+    g = models.ForeignKey('Girl_Girl_Girl', on_delete=models.PROTECT)

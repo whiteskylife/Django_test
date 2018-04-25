@@ -21,8 +21,10 @@ from django.conf.urls import url, include
 
 
 urlpatterns = [
-    re_path(r'^login.html$', account.login),
+    # re_path(r'^login.html$', account.login),
     re_path(r'^test$', test.login),
+    re_path(r'^index.html$', account.index),
+    re_path(r'^check_code.html$', account.check_code),
     # re_path(r'^index/', test.index),
     # re_path(r'^logout/$', test.logout),
     # re_path(r'^csrf/$', test.csrf),
