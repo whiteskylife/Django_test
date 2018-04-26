@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from app04 import models
 # Create your views here.
-
+import requests
 
 def article(request, **kwargs):
     # article_type_list = models.ArticleType.objects.all()
