@@ -17,12 +17,14 @@ from django.contrib import admin
 from django.urls import path, re_path
 from cmdb import views
 from django.conf.urls import url, include
-
+from app04 import views
 
 urlpatterns = [
     url(r'cmdb/', include("app01.urls")),
     url(r'monitor/', include("app02.urls")),
     url(r'app03/', include("app03.urls")),
+    path(r'article/', views.article),
+    re_path(r'article-(?P<article_type_id>\d+)-(?P<category_id>\d+)', views.article),
 ]
 
 

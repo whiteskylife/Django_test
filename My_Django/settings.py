@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'app01',
     'app02',
     'app03',
+    'app04',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {  # Adding this section should work around the issue.
+                'staticfiles': 'django.templatetags.static',
+            },
         },
     },
 ]
